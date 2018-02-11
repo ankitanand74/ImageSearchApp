@@ -11,11 +11,6 @@
     <string name="parse_error">Parsing error, try again after some time!</string>
     <string name="timeout_error">Connection TimeOut, please check your internet connection!</string>
 
-    <!-- Menu names -->
-    <string name="menu_zoom">Stretch image to screen</string>
-    <string name="menu_original_size">Original size</string>
-    <string name="share">Share image</string>
-
     <!-- Toast strings -->
     <string name="image_loading">Image is loading</string>
     <string name="error_loading">Error loading image</string>

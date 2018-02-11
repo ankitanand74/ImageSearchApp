@@ -2,14 +2,19 @@ package com.example.imnobody.photosearch;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
+import android.util.FloatMath;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -25,20 +30,31 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import static android.R.attr.start;
+
 public class ImageActivity extends AppCompatActivity {
 
-    ShareActionProvider myShareActionProvider;
-    Intent shareIntent;
-    private ImageView fullImageView;
-    private String fullImageString;
+    private static final String TAG = ImageActivity.class.getName();
+    // These matrices will be used to move and zoom image
+    private Matrix matrix = new Matrix();
+    private Matrix savedMatrix = new Matrix();
+
+    // We can be in one of these 3 states
+    private static final int NONE = 0;
+    private static final int DRAG = 1;
+    private static final int ZOOM = 2;
+    private int mode = NONE;
+    private PointF start = new PointF();
+    private PointF mid = new PointF();
+    private float oldDist = 1f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image);
 
-        fullImageView = (ImageView) findViewById(R.id.fullImageid);
-        fullImageString = getIntent().getExtras().getString("imageuri");
+        ImageView fullImageView = (ImageView) findViewById(R.id.fullImageid);
+        String fullImageString = getIntent().getExtras().getString("imageuri");
         final ProgressBar progressBar = (ProgressBar)findViewById(R.id.loading_indicator_main_grid);
 
         Glide
@@ -56,7 +72,6 @@ public class ImageActivity extends AppCompatActivity {
                         progressBar.setVisibility(View.INVISIBLE);
                         //Error in gif
                         prepareShareIntent(((GlideBitmapDrawable) resource).getBitmap());
-                        attachShareIntentAction();
                         return false;
                     }
                 })
@@ -73,55 +88,81 @@ public class ImageActivity extends AppCompatActivity {
                 }
             }
         });
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+        fullImageView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.d(TAG,"onTouch() ");
+                ImageView view = (ImageView) v;
 
-        getMenuInflater().inflate(R.menu.full_img_menu, menu);
-        MenuItem shareItem = menu.findItem(R.id.action_share);
-        myShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
-        attachShareIntentAction();
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-
-        // toggle menu item
-        switch (id) {
-            case R.id.menu_zoom:
-                if (item.getTitle() == getResources().getString(R.string.menu_zoom)) {
-                    fullImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                    item.setTitle(getResources().getString(R.string.menu_original_size));
-                } else {
-                    fullImageView.setScaleType(ImageView.ScaleType.CENTER);
-                    item.setTitle(getResources().getString(R.string.menu_zoom));
+                // Handle touch events here...
+                switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                    case MotionEvent.ACTION_DOWN:
+                        savedMatrix.set(matrix);
+                        start.set(event.getX(), event.getY());
+                        Log.d(TAG, "mode=DRAG");
+                        mode = DRAG;
+                        break;
+                    case MotionEvent.ACTION_POINTER_DOWN:
+                        oldDist = spacing(event);
+                        Log.d(TAG, "oldDist=" + oldDist);
+                        if (oldDist > 10f) {
+                            savedMatrix.set(matrix);
+                            midPoint(mid, event);
+                            mode = ZOOM;
+                            Log.d(TAG, "mode=ZOOM");
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_POINTER_UP:
+                        mode = NONE;
+                        Log.d(TAG, "mode=NONE");
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        if (mode == DRAG) {
+                            // ...
+                            matrix.set(savedMatrix);
+                            matrix.postTranslate(event.getX() - start.x, event.getY()
+                                    - start.y);
+                        } else if (mode == ZOOM) {
+                            float newDist = spacing(event);
+                            Log.d(TAG, "newDist=" + newDist);
+                            if (newDist > 10f) {
+                                matrix.set(savedMatrix);
+                                float scale = newDist / oldDist;
+                                matrix.postScale(scale, scale, mid.x, mid.y);
+                            }
+                        }
+                        break;
                 }
+
+                view.setImageMatrix(matrix);
                 return true;
+            }
+        });
+    }
 
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+    /** Determine the space between the first two fingers */
+    private float spacing(MotionEvent event) {
+        float x = event.getX(0) - event.getX(1);
+        float y = event.getY(0) - event.getY(1);
+        return (float)Math.sqrt(x * x + y * y);
+    }
 
-
+    /** Calculate the mid point of the first two fingers */
+    private void midPoint(PointF point, MotionEvent event) {
+        float x = event.getX(0) + event.getX(1);
+        float y = event.getY(0) + event.getY(1);
+        point.set(x / 2, y / 2);
     }
 
     public void prepareShareIntent(Bitmap drawableImage) {
         Uri bmpUri = getBitmapFromDrawable(drawableImage);
-        shareIntent = new Intent();
+        Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
         shareIntent.setType("image/*");
 
-    }
-
-
-    public void attachShareIntentAction() {
-        if (myShareActionProvider != null && shareIntent != null)
-            myShareActionProvider.setShareIntent(shareIntent);
     }
 
     public Uri getBitmapFromDrawable(Bitmap bmp) {

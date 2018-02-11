@@ -234,4 +234,5 @@ public class MainActivity extends AppCompatActivity {
     public String getUri() {
         return Utils.getUri(getSearchString()).toString();
     }
+
 }

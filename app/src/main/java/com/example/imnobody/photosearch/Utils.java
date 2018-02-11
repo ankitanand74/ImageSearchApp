@@ -28,11 +28,11 @@ public final class Utils {
         Uri baseuri = Uri.parse(BASEURL);
         Uri.Builder uriBuilder = baseuri.buildUpon();
         uriBuilder.appendQueryParameter("q", query);
+        //uriBuilder.appendQueryParameter("q_size_px", "small");
         return uriBuilder;
     }
 
     // Extract json from string response
-
     public static List<String> extractImages(String sampleJsonResponse) {
 
         List<String> imageUrlList = new ArrayList<>();
@@ -64,7 +64,9 @@ public final class Utils {
                         imagesJSONObject = imagesJSONArray.getJSONObject(0);
                     }
                     if (imagesJSONObject != null && imagesJSONObject.has("link")){
-                        imageUrlList.add(imagesJSONObject.getString("link"));
+                        String currLink = imagesJSONObject.getString("link");
+                        if(!currLink.contains("gif"))
+                            imageUrlList.add(currLink);
                     }
                 }
             }
