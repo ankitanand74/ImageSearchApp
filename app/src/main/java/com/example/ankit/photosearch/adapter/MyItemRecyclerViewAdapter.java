@@ -9,9 +9,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.LinkedList;
-import java.util.List;
 
-import imageserach.fieldwire.amko0l.com.imagesearch.R;
+import com.example.ankit.photosearch.R;
 
 /**
  * {@link RecyclerView.Adapter} that can display content and makes a call to the

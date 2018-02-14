@@ -15,8 +15,8 @@ import com.bumptech.glide.request.target.Target;
 
 import java.util.List;
 
-import imageserach.fieldwire.amko0l.com.imagesearch.R;
-import imageserach.fieldwire.amko0l.com.imagesearch.activities.ImageHolderFragment;
+import com.example.ankit.photosearch.R;
+import com.example.ankit.photosearch.activities.ImageHolderFragment;
 
 public class MyImageHoldingRecyclerViewAdapter extends RecyclerView.Adapter<MyImageHoldingRecyclerViewAdapter.ViewHolder> {
 

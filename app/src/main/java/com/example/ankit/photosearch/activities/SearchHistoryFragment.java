@@ -19,8 +19,8 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import imageserach.fieldwire.amko0l.com.imagesearch.R;
-import imageserach.fieldwire.amko0l.com.imagesearch.adapter.MyItemRecyclerViewAdapter;
+import com.example.ankit.photosearch.R;
+import com.example.ankit.photosearch.adapter.MyItemRecyclerViewAdapter;
 
 import static android.content.Context.MODE_PRIVATE;
 

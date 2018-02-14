@@ -1,9 +1,5 @@
 package com.example.ankit.photosearch.utils;
 
-/**
- * Created by mmt5544 on 11/2/18.
- */
-
 public class AppConstants {
     public static final String IMAGE_SEARCH_PAGE = "image_search_page";
     public static final String IMAGE_LOAD_PAGE = "image_loading_page";

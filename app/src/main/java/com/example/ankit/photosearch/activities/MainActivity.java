@@ -18,13 +18,13 @@ import android.widget.Toast;
 
 import java.util.List;
 
-import imageserach.fieldwire.amko0l.com.imagesearch.adapter.MyItemRecyclerViewAdapter;
-import imageserach.fieldwire.amko0l.com.imagesearch.R;
-import imageserach.fieldwire.amko0l.com.imagesearch.utils.FragmentManagerUtil;
-import imageserach.fieldwire.amko0l.com.imagesearch.utils.Utils;
+import com.example.ankit.photosearch.adapter.MyItemRecyclerViewAdapter;
+import com.example.ankit.photosearch.R;
+import com.example.ankit.photosearch.utils.FragmentManagerUtil;
+import com.example.ankit.photosearch.utils.Utils;
 
-import static imageserach.fieldwire.amko0l.com.imagesearch.utils.AppConstants.IMAGE_LOAD_PAGE;
-import static imageserach.fieldwire.amko0l.com.imagesearch.utils.AppConstants.IMAGE_SEARCH_PAGE;
+import static com.example.ankit.photosearch.utils.AppConstants.IMAGE_LOAD_PAGE;
+import static com.example.ankit.photosearch.utils.AppConstants.IMAGE_SEARCH_PAGE;
 
 public class MainActivity extends AppCompatActivity implements
         MyItemRecyclerViewAdapter.OnListFragmentInteractionListener, ImageHolderFragment.OnImageHolderIInteractionListener {

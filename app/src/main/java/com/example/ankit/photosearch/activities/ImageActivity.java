@@ -25,8 +25,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import imageserach.fieldwire.amko0l.com.imagesearch.R;
-import imageserach.fieldwire.amko0l.com.imagesearch.utils.Utils;
+import com.example.ankit.photosearch.R;
+import com.example.ankit.photosearch.utils.Utils;
 
 public class ImageActivity extends AppCompatActivity {
 
@@ -172,7 +172,7 @@ public class ImageActivity extends AppCompatActivity {
             FileOutputStream out = new FileOutputStream(file);
             bmp.compress(Bitmap.CompressFormat.PNG, 90, out);
             out.close();
-            bmpUri = FileProvider.getUriForFile(ImageActivity.this, "imageserach.fieldwire.amko0l.com.imagesearch.fileprovider", file);
+            bmpUri = FileProvider.getUriForFile(ImageActivity.this, "com.example.ankit.photosearch.fileprovider", file);
         } catch (IOException e) {
             e.printStackTrace();
         }

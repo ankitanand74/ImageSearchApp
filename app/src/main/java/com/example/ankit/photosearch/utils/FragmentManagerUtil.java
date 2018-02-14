@@ -7,10 +7,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
-/**
- * Created by mmt5544 on 11/2/18.
- */
-
 public class FragmentManagerUtil {
     public static void createFragment(int id, Fragment pFragment, String tagName, AppCompatActivity context, boolean backStateMaintained) {
         if (isActivityActive(context)) {

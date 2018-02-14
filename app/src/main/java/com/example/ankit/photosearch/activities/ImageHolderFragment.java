@@ -17,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
@@ -34,14 +33,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import imageserach.fieldwire.amko0l.com.imagesearch.R;
-import imageserach.fieldwire.amko0l.com.imagesearch.adapter.MyImageHoldingRecyclerViewAdapter;
-import imageserach.fieldwire.amko0l.com.imagesearch.utils.ConnectivityUtils;
-import imageserach.fieldwire.amko0l.com.imagesearch.utils.Utils;
-import imageserach.fieldwire.amko0l.com.imagesearch.utils.VolleySingleton;
+import com.example.ankit.photosearch.R;
+import com.example.ankit.photosearch.adapter.MyImageHoldingRecyclerViewAdapter;
+import com.example.ankit.photosearch.utils.ConnectivityUtils;
+import com.example.ankit.photosearch.utils.Utils;
+import com.example.ankit.photosearch.utils.VolleySingleton;
 
-import static imageserach.fieldwire.amko0l.com.imagesearch.utils.AppConstants.ARG_COLUMN_COUNT;
-import static imageserach.fieldwire.amko0l.com.imagesearch.utils.AppConstants.SEARCH_STRING;
+import static com.example.ankit.photosearch.utils.AppConstants.ARG_COLUMN_COUNT;
+import static com.example.ankit.photosearch.utils.AppConstants.SEARCH_STRING;
 
 /**
  * A fragment representing a list of Items.

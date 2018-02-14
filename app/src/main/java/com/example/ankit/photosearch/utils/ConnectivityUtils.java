@@ -1,9 +1,5 @@
 package com.example.ankit.photosearch.utils;
 
-/**
- * Created by amit7 on 2/10/2018.
- */
-
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
