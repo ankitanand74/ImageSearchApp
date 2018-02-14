@@ -6,6 +6,7 @@
 
    <!-- Layout hard code string constant-->
     <string name="search_history">Search History</string>
+    <string name="no_results">No results found :(</string>
 
     <!-- Error names for Volley -->
     <string name="connection_error">Please check your connection!</string>
@@ -18,6 +19,5 @@
     <!-- Toast strings -->
     <string name="image_loading">Image is loading</string>
     <string name="error_loading">Error loading image</string>
-
 
 </resources>

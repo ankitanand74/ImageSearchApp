@@ -40,16 +40,13 @@ import com.example.ankit.photosearch.utils.ConnectivityUtils;
 import com.example.ankit.photosearch.utils.Utils;
 import com.example.ankit.photosearch.utils.VolleySingleton;
 
-import static com.example.ankit.photosearch.utils.AppConstants.ARG_COLUMN_COUNT;
-import static com.example.ankit.photosearch.utils.AppConstants.SEARCH_STRING;
-
 public class ImageHolderFragment extends Fragment {
 
-    private static final String TAG = "ImageHolderFragment";
+    private static final String TAG = ImageHolderFragment.class.getSimpleName();
     private int mColumnCount = 2;
     private OnImageHolderIInteractionListener mListener;
     private String searchString;
-    BroadcastReceiver mReceiver;
+    private BroadcastReceiver mReceiver;
     private IntentFilter intentFilter;
     private ProgressBar loadingIndicator;
     private RecyclerView recyclerView;
@@ -64,8 +61,8 @@ public class ImageHolderFragment extends Fragment {
     public static ImageHolderFragment newInstance(String searchQuery) {
         ImageHolderFragment fragment = new ImageHolderFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, 2);
-        args.putString(SEARCH_STRING, searchQuery);
+        args.putInt(AppConstants.ARG_COLUMN_COUNT, 2);
+        args.putString(AppConstants.SEARCH_STRING, searchQuery);
         fragment.setArguments(args);
         return fragment;
     }
@@ -75,8 +72,8 @@ public class ImageHolderFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-            searchString = getArguments().getString(SEARCH_STRING);
+            mColumnCount = getArguments().getInt(AppConstants.ARG_COLUMN_COUNT);
+            searchString = getArguments().getString(AppConstants.SEARCH_STRING);
         }
 
         Utils.setContext(getActivity());
@@ -197,7 +194,7 @@ public class ImageHolderFragment extends Fragment {
             imageList.clear();
         }
 
-        if(response != null  || response.size()!=0){
+        if(response != null && response.size()!=0){
             imageList.addAll(response);
             myImageHoldingRecyclerViewAdapter.notifyDataSetChanged();
         }else{
