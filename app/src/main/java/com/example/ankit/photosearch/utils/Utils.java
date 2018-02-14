@@ -20,9 +20,6 @@ public final class Utils {
     private static final String TAG = Utils.class.getName();
     private static final String BASEURL = "https://api.imgur.com/3/gallery/search/";
 
-    private Utils() {
-    }
-
     public static void setContext(Context cnxt){
         context = cnxt;
     }
@@ -63,15 +60,9 @@ public final class Utils {
                     if (itemsArrayJSONObject.has("images"))
                         imagesJSONArray = itemsArrayJSONObject.getJSONArray("images");
 
-                /*
-                 * To retrieve  thumbnails -- omitted
-                 *
-                 * JSONObject imageJSONObject = itemsArrayJSONObject.getJSONObject("image");
-                 * imageUrl.add(imageJSONObject.getString("thumbnailLink"));
-                 */
                     JSONObject imagesJSONObject = null;
                     if (imagesJSONArray != null) {
-                        Log.d("Ankit", "images is " + imagesJSONArray.length());
+                        Log.d(TAG, "images is " + imagesJSONArray.length());
                         imagesJSONObject = imagesJSONArray.getJSONObject(0);
                     }
 

@@ -24,21 +24,14 @@ import com.example.ankit.photosearch.adapter.MyItemRecyclerViewAdapter;
 
 import static android.content.Context.MODE_PRIVATE;
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- * interface.
- */
-public class SearchHistoryFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
+public class SearchHistoryFragment extends Fragment {
+    private static final String TAG = SearchHistoryFragment.class.getName();
+
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
 
     private String searchHistory = "SEARCH_HISTORY_FIELDWIRE";
     private String prefName = "SEARCH_HISTORY";
-    private String searchString;
     private TextView emptyTextView;
     private MyItemRecyclerViewAdapter.OnListFragmentInteractionListener mListener;
 
@@ -47,10 +40,7 @@ public class SearchHistoryFragment extends Fragment {
     LinkedList<String> searchHistoryArray;
     private MyItemRecyclerViewAdapter myItemRecyclerViewAdapter;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
+
     public SearchHistoryFragment() {
     }
 
@@ -77,10 +67,6 @@ public class SearchHistoryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
 
         sharedPref = getActivity().getSharedPreferences(prefName, MODE_PRIVATE);
         searchHistoryArray = new LinkedList<>();
@@ -126,12 +112,12 @@ public class SearchHistoryFragment extends Fragment {
     // Handle query from seacrchWidget
     public void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            searchString = intent.getStringExtra(SearchManager.QUERY);
+            String searchString = intent.getStringExtra(SearchManager.QUERY);
             Set<String> set = sharedPref.getStringSet(searchHistory, new LinkedHashSet<String>());
             Set<String> newSet = new LinkedHashSet<>();
             newSet.addAll(set);
             newSet.add(searchString);
-            Log.d("Amit  ", "set is " + newSet);
+            Log.d(TAG  , "set is " + newSet);
             editor = getActivity().getSharedPreferences(prefName, MODE_PRIVATE).edit();
             editor.putStringSet(searchHistory, newSet);
             editor.apply();

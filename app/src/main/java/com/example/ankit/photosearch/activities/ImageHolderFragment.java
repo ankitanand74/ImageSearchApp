@@ -35,6 +35,7 @@ import java.util.Map;
 
 import com.example.ankit.photosearch.R;
 import com.example.ankit.photosearch.adapter.MyImageHoldingRecyclerViewAdapter;
+import com.example.ankit.photosearch.utils.AppConstants;
 import com.example.ankit.photosearch.utils.ConnectivityUtils;
 import com.example.ankit.photosearch.utils.Utils;
 import com.example.ankit.photosearch.utils.VolleySingleton;
@@ -42,11 +43,6 @@ import com.example.ankit.photosearch.utils.VolleySingleton;
 import static com.example.ankit.photosearch.utils.AppConstants.ARG_COLUMN_COUNT;
 import static com.example.ankit.photosearch.utils.AppConstants.SEARCH_STRING;
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- * interface.
- */
 public class ImageHolderFragment extends Fragment {
 
     private static final String TAG = "ImageHolderFragment";
@@ -61,19 +57,14 @@ public class ImageHolderFragment extends Fragment {
     private TextView emptyTextView;
     private List<String> imageList;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
+
     public ImageHolderFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static ImageHolderFragment newInstance(int columnCount, String searchQuery) {
+    public static ImageHolderFragment newInstance(String searchQuery) {
         ImageHolderFragment fragment = new ImageHolderFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
+        args.putInt(ARG_COLUMN_COUNT, 2);
         args.putString(SEARCH_STRING, searchQuery);
         fragment.setArguments(args);
         return fragment;
@@ -154,11 +145,6 @@ public class ImageHolderFragment extends Fragment {
 
     //Volley request for json string
     public void volleyRequest(String volleysearchString, final int addFlag) {
-
-        /*
-         * @params {Request type, url to be searched, responseHandler, errorHandler}
-         */
-
         StringRequest stringRequest = new StringRequest(Request.Method.GET, volleysearchString,
                 new Response.Listener<String>() {
                     @Override
@@ -170,7 +156,6 @@ public class ImageHolderFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 loadingIndicator.setVisibility(View.GONE);
-                //Toast.makeText(MainActivity.this, getResources().getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
                 emptyTextView.setVisibility(View.VISIBLE);
 
                 String message = null;
@@ -192,11 +177,11 @@ public class ImageHolderFragment extends Fragment {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Client-ID 41a1c63ff97b89d");
+                headers.put("Authorization", AppConstants.APP_CLIENT_ID);
                 return headers;
             }
         };
-
+        VolleySingleton.getInstance(getActivity().getApplicationContext()).getRequestQueue().cancelAll(this);
         VolleySingleton.getInstance(getActivity().getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
@@ -211,8 +196,15 @@ public class ImageHolderFragment extends Fragment {
         if (addFlag == 0) {
             imageList.clear();
         }
-        imageList.addAll(response);
-        myImageHoldingRecyclerViewAdapter.notifyDataSetChanged();
+
+        if(response != null  || response.size()!=0){
+            imageList.addAll(response);
+            myImageHoldingRecyclerViewAdapter.notifyDataSetChanged();
+        }else{
+            emptyTextView.setVisibility(View.VISIBLE);
+            emptyTextView.setText(R.string.no_results);
+        }
+
     }
 
     public String getSearchString() {
@@ -223,7 +215,6 @@ public class ImageHolderFragment extends Fragment {
         return Utils.getUri(getSearchString()).toString();
     }
 
-    // This method probably sends out a network request and appends new data items to your adapter.
     public void loadNextDataFromApi(int offset) {
         Uri.Builder uriBuilder = Utils.getUri(getSearchString());
         uriBuilder.appendQueryParameter("start", "" + offset);
@@ -241,16 +232,6 @@ public class ImageHolderFragment extends Fragment {
         }
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnImageHolderIInteractionListener {
         void onListImageHolderInteraction(String imageUrl, ImageView imageView, ProgressBar progressBar);
     }

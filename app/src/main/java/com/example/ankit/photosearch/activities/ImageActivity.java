@@ -26,16 +26,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import com.example.ankit.photosearch.R;
+import com.example.ankit.photosearch.utils.AppConstants;
 import com.example.ankit.photosearch.utils.Utils;
 
 public class ImageActivity extends AppCompatActivity {
 
     private static final String TAG = ImageActivity.class.getName();
-    // These matrices will be used to move and zoom image
     private Matrix matrix = new Matrix();
     private Matrix savedMatrix = new Matrix();
 
-    // We can be in one of these 3 states
     private static final int NONE = 0;
     private static final int DRAG = 1;
     private static final int ZOOM = 2;
@@ -66,7 +65,6 @@ public class ImageActivity extends AppCompatActivity {
                     @Override
                     public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
                         progressBar.setVisibility(View.INVISIBLE);
-                        //Error in gif
                         prepareShareIntent(((GlideBitmapDrawable) resource).getBitmap());
                         return false;
                     }
@@ -102,7 +100,7 @@ public class ImageActivity extends AppCompatActivity {
                     case MotionEvent.ACTION_POINTER_DOWN:
                         oldDist = spacing(event);
                         Log.d(TAG, "oldDist=" + oldDist);
-                        if (oldDist > 10f) {
+                        if (oldDist > 10f) {//Zoom In
                             savedMatrix.set(matrix);
                             midPoint(mid, event);
                             mode = ZOOM;
@@ -172,7 +170,7 @@ public class ImageActivity extends AppCompatActivity {
             FileOutputStream out = new FileOutputStream(file);
             bmp.compress(Bitmap.CompressFormat.PNG, 90, out);
             out.close();
-            bmpUri = FileProvider.getUriForFile(ImageActivity.this, "com.example.ankit.photosearch.fileprovider", file);
+            bmpUri = FileProvider.getUriForFile(ImageActivity.this, AppConstants.APP_PACKAGE_PROVIDER_NAME, file);
         } catch (IOException e) {
             e.printStackTrace();
         }
