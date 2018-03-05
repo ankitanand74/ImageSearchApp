@@ -1,5 +1,6 @@
 package com.example.ankit.photosearch.activities;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +36,7 @@ import java.util.Map;
 
 import com.example.ankit.photosearch.R;
 import com.example.ankit.photosearch.adapter.MyImageHoldingRecyclerViewAdapter;
+import com.example.ankit.photosearch.listeners.EndlessRecyclerViewScrollListener;
 import com.example.ankit.photosearch.utils.AppConstants;
 import com.example.ankit.photosearch.utils.ConnectivityUtils;
 import com.example.ankit.photosearch.utils.Utils;
@@ -53,6 +55,9 @@ public class ImageHolderFragment extends Fragment {
     private MyImageHoldingRecyclerViewAdapter myImageHoldingRecyclerViewAdapter;
     private TextView emptyTextView;
     private List<String> imageList;
+
+    private int offset = 1;
+    private EndlessRecyclerViewScrollListener scrollListener;
 
 
     public ImageHolderFragment() {
@@ -115,9 +120,21 @@ public class ImageHolderFragment extends Fragment {
             Context context = view.getContext();
             recyclerView = view.findViewById(R.id.recyclerView);
             myImageHoldingRecyclerViewAdapter = new MyImageHoldingRecyclerViewAdapter(imageList, mListener, getActivity());
-            recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(context, mColumnCount);
+            recyclerView.setLayoutManager(gridLayoutManager);
             recyclerView.setAdapter(myImageHoldingRecyclerViewAdapter);
+            scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+                @Override
+                public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                    // Triggered only when new data needs to be appended to the list
+                    // Add whatever code is needed to append new items to the bottom of the list
+                    loadNextDataFromApi();
+                }
+            };
+            // Adds the scroll listener to RecyclerView
+            recyclerView.addOnScrollListener(scrollListener);
         }
+        Log.d(TAG,"on create view called  " +offset);
         volleyRequest(getUri(), 0);
         return view;
     }
@@ -155,19 +172,21 @@ public class ImageHolderFragment extends Fragment {
                 loadingIndicator.setVisibility(View.GONE);
                 emptyTextView.setVisibility(View.VISIBLE);
 
-                String message = null;
-                if (error instanceof NetworkError) {
-                    message = getResources().getString(R.string.connection_error);
-                } else if (error instanceof ServerError) {
-                    message = getResources().getString(R.string.server_error);
-                } else if (error instanceof AuthFailureError) {
-                    message = getResources().getString(R.string.connection_error);
-                } else if (error instanceof ParseError) {
-                    message = getResources().getString(R.string.parse_error);
-                } else if (error instanceof TimeoutError) {
-                    message = getResources().getString(R.string.timeout_error);
+                Activity activity = getActivity();
+                String message = "Error";
+                if(activity!=null) {
+                    if (error instanceof NetworkError) {
+                        message = getResources().getString(R.string.connection_error);
+                    } else if (error instanceof ServerError) {
+                        message = getResources().getString(R.string.server_error);
+                    } else if (error instanceof AuthFailureError) {
+                        message = getResources().getString(R.string.connection_error);
+                    } else if (error instanceof ParseError) {
+                        message = getResources().getString(R.string.parse_error);
+                    } else if (error instanceof TimeoutError) {
+                        message = getResources().getString(R.string.timeout_error);
+                    }
                 }
-
                 emptyTextView.setText(message);
             }
         }) {
@@ -190,9 +209,8 @@ public class ImageHolderFragment extends Fragment {
 
     public void updateUIPostExecute(List<String> response, int addFlag) {
 
-        if (addFlag == 0) {
+        if (addFlag == 0)
             imageList.clear();
-        }
 
         if(response != null && response.size()!=0){
             imageList.addAll(response);
@@ -212,8 +230,11 @@ public class ImageHolderFragment extends Fragment {
         return Utils.getUri(getSearchString()).toString();
     }
 
-    public void loadNextDataFromApi(int offset) {
-        Uri.Builder uriBuilder = Utils.getUri(getSearchString());
+    public void loadNextDataFromApi() {
+        loadingIndicator.setVisibility(View.VISIBLE);
+        offset++;
+        Log.d(TAG, "loadNextDataFromApi  " +offset);
+        Uri.Builder uriBuilder = Utils.getUri(getSearchString(), offset);
         uriBuilder.appendQueryParameter("start", "" + offset);
         volleyRequest(uriBuilder.toString(), 1);
     }
